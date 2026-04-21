@@ -6,7 +6,7 @@ exports.handler = async function (event) {
       statusCode: 200,
       headers: {
         "Access-Control-Allow-Origin": "*",
-        "Access-Control-Allow-Methods": "POST, PATCH, OPTIONS",
+        "Access-Control-Allow-Methods": "GET, POST, PATCH, OPTIONS",
         "Access-Control-Allow-Headers": "Content-Type, Authorization, X-Path",
       },
       body: "",
@@ -15,9 +15,9 @@ exports.handler = async function (event) {
 
   const authHeader = event.headers["authorization"] || "";
   const token = authHeader.replace("Bearer ", "").trim();
-  const body = event.body;
   const customPath = event.headers["x-path"] || "/marketing/v3/emails";
   const method = event.httpMethod;
+  const body = event.body || "";
 
   return new Promise((resolve) => {
     const options = {
@@ -27,9 +27,12 @@ exports.handler = async function (event) {
       headers: {
         "Authorization": `Bearer ${token}`,
         "Content-Type": "application/json",
-        "Content-Length": Buffer.byteLength(body),
       },
     };
+
+    if (body) {
+      options.headers["Content-Length"] = Buffer.byteLength(body);
+    }
 
     const req = https.request(options, (res) => {
       let data = "";
@@ -51,7 +54,7 @@ exports.handler = async function (event) {
       });
     });
 
-    req.write(body);
+    if (body) req.write(body);
     req.end();
   });
 };
