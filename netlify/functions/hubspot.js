@@ -24,7 +24,7 @@ exports.handler = async function (event) {
   return new Promise((resolve) => {
     const options = {
       hostname: "api.hubapi.com",
-      path: "/marketing/v3/emails",
+      path: "/marketing-emails/v1/emails",
       method: "POST",
       headers: {
         "Authorization": `Bearer ${token}`,
