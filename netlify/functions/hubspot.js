@@ -6,26 +6,24 @@ exports.handler = async function (event) {
       statusCode: 200,
       headers: {
         "Access-Control-Allow-Origin": "*",
-        "Access-Control-Allow-Methods": "POST, OPTIONS",
-        "Access-Control-Allow-Headers": "Content-Type, Authorization",
+        "Access-Control-Allow-Methods": "POST, PATCH, OPTIONS",
+        "Access-Control-Allow-Headers": "Content-Type, Authorization, X-Path",
       },
       body: "",
     };
   }
 
-  if (event.httpMethod !== "POST") {
-    return { statusCode: 405, body: "Method Not Allowed" };
-  }
-
   const authHeader = event.headers["authorization"] || "";
   const token = authHeader.replace("Bearer ", "").trim();
   const body = event.body;
+  const customPath = event.headers["x-path"] || "/marketing/v3/emails";
+  const method = event.httpMethod;
 
   return new Promise((resolve) => {
     const options = {
       hostname: "api.hubapi.com",
-      path: "/marketing-emails/v1/emails",
-      method: "POST",
+      path: customPath,
+      method: method,
       headers: {
         "Authorization": `Bearer ${token}`,
         "Content-Type": "application/json",
