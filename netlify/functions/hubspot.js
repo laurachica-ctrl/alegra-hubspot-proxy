@@ -19,21 +19,12 @@ exports.handler = async function (event) {
 
   const authHeader = event.headers["authorization"] || "";
   const token = authHeader.replace("Bearer ", "").trim();
-
-  if (!token) {
-    return {
-      statusCode: 401,
-      headers: { "Access-Control-Allow-Origin": "*" },
-      body: JSON.stringify({ error: "Token requerido" }),
-    };
-  }
-
   const body = event.body;
 
   return new Promise((resolve) => {
     const options = {
       hostname: "api.hubapi.com",
-      path: "/marketing-emails/v1/emails",
+      path: "/marketing/v3/emails",
       method: "POST",
       headers: {
         "Authorization": `Bearer ${token}`,
@@ -48,10 +39,7 @@ exports.handler = async function (event) {
       res.on("end", () => {
         resolve({
           statusCode: res.statusCode,
-          headers: {
-            "Access-Control-Allow-Origin": "*",
-            "Content-Type": "application/json",
-          },
+          headers: { "Access-Control-Allow-Origin": "*", "Content-Type": "application/json" },
           body: data,
         });
       });
